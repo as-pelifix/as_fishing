@@ -1,16 +1,31 @@
 local ESX = exports["es_extended"]:getSharedObject()
 local isFishing = false
+local fishingThread = false
 local currentRod = nil
+local currentRodName = nil
 local activeRodObj = nil
 
 local function debugPrint(msg)
     if Config.Debug then print("^2[Fishing Debug] ^7" .. msg) end
 end
 
+-- Create zones once at resource start instead of every GetCurrentZone() call
+local fishingZones = {}
+
+CreateThread(function()
+    for name, data in pairs(Config.FishingZones) do
+        fishingZones[name] = lib.zones.box({
+            coords = data.coords,
+            size = data.size,
+            rotation = data.rotation
+        })
+    end
+end)
+
 function GetCurrentZone()
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
-    
+
     if IsPedInAnyVehicle(ped, false) then
         return nil, Config.Lang['no_vehicle_fishing']
     end
@@ -19,15 +34,10 @@ function GetCurrentZone()
         return nil, Config.Lang['no_svim_fishing']
     end
 
-    for name, data in pairs(Config.FishingZones) do
-        local zone = lib.zones.box({
-            coords = data.coords,
-            size = data.size,
-            rotation = data.rotation
-        })
+    for name, zone in pairs(fishingZones) do
         if zone:contains(coords) then return 'zone' end
     end
-    
+
     local veh = GetVehiclePedIsUsing(ped)
     if veh ~= 0 and GetVehicleClass(veh) == 14 then
         debugPrint("Player is on boat.")
@@ -50,9 +60,9 @@ function GetPlayerRod()
     local rodTypes = {'rare_rod', 'medium_rod', 'normal_rod'}
     for _, rodName in ipairs(rodTypes) do
         local count = exports.ox_inventory:Search('count', rodName)
-        if count and count > 0 then 
+        if count and count > 0 then
             debugPrint("Using rod: " .. rodName)
-            return rodName, Config.Rods[rodName] 
+            return rodName, Config.Rods[rodName]
         end
     end
     return nil, nil
@@ -62,28 +72,29 @@ function StopFishing()
     isFishing = false
     lib.hideTextUI()
     local ped = PlayerPedId()
-    
-    if activeRodObj and DoesEntityExist(activeRodObj) then 
+
+    if activeRodObj and DoesEntityExist(activeRodObj) then
         DetachEntity(activeRodObj, true, true)
-        DeleteEntity(activeRodObj) 
+        DeleteEntity(activeRodObj)
         activeRodObj = nil
     end
 
     ClearPedTasksImmediately(ped)
     StopAnimTask(ped, 'amb@world_human_stand_fishing@idle_a', 'idle_b', 1.0)
-    
+    RemoveAnimDict('amb@world_human_stand_fishing@idle_a')
+
     debugPrint("Fishing stoppet.")
 end
 
 RegisterNetEvent('as_fishing:start')
 AddEventHandler('as_fishing:start', function()
-    if isFishing then 
-        StopFishing() 
-        return 
+    if isFishing then
+        StopFishing()
+        return
     end
-    
+
     local ped = PlayerPedId()
-    
+
     local zoneType, errorMsg = GetCurrentZone()
     if not zoneType then
         return lib.notify({description = errorMsg, type = 'error'})
@@ -95,40 +106,46 @@ AddEventHandler('as_fishing:start', function()
     end
 
     currentRod = rodData
+    currentRodName = rodName
     isFishing = true
     StartFishingCycle(zoneType)
 end)
 
 function StartFishingCycle(zoneType)
+    -- Guard against multiple concurrent fishing threads
+    if fishingThread then return end
+    fishingThread = true
+
     local ped = PlayerPedId()
-    
+
     lib.requestAnimDict('amb@world_human_stand_fishing@idle_a')
     TaskPlayAnim(ped, 'amb@world_human_stand_fishing@idle_a', 'idle_b', 8.0, 8.0, -1, 1, 1, 0, 0, 0)
-    
+
     local boneIndex = GetPedBoneIndex(ped, 60309)
-    activeRodObj = CreateObject(`prop_fishing_rod_01`, GetEntityCoords(ped), true, false, false)
+    -- Local prop only, no need for networking
+    activeRodObj = CreateObject(`prop_fishing_rod_01`, GetEntityCoords(ped), false, false, false)
     AttachEntityToEntity(activeRodObj, ped, boneIndex, 0, 0, 0, 0, 0, 0, false, false, false, false, 2, true)
 
     local baseWait = 0
-    if zoneType == 'zone' then 
+    if zoneType == 'zone' then
         baseWait = math.random(Config.FishingZoneTime.min, Config.FishingZoneTime.max)
-    elseif zoneType == 'deep' then 
+    elseif zoneType == 'deep' then
         lib.notify({description = Config.Lang['youre_in_deep_water'], type = 'success'})
         baseWait = math.random(Config.DeepWaterTime.min, Config.DeepWaterTime.max)
-    else 
-        baseWait = math.random(Config.NormalTime.min, Config.NormalTime.max) 
+    else
+        baseWait = math.random(Config.NormalTime.min, Config.NormalTime.max)
     end
 
     local multiplier = (currentRod.CatchingMultiplier > 0) and currentRod.CatchingMultiplier or 1
     local finalWait = baseWait / multiplier
-    
+
     lib.showTextUI(Config.Lang['stop_fishing'])
-    
+
     CreateThread(function()
         local timer = 0
         while isFishing do
-            Wait(0)
-            timer = timer + (GetFrameTime() * 1000)
+            Wait(100)
+            timer = timer + 100
 
             if IsPedSwimming(ped) or IsPedInAnyVehicle(ped, false) then
                 StopFishing()
@@ -136,30 +153,28 @@ function StartFishingCycle(zoneType)
                 break
             end
 
-            if IsControlJustPressed(0, 73) then 
+            if IsControlJustPressed(0, 73) then
                 StopFishing()
                 lib.notify({description = Config.Lang['fishing_stop'], type = 'inform'})
                 break
             end
-            
+
             if timer >= finalWait then
                 debugPrint("Noget bed på!")
                 local success = lib.skillCheck(Config.SkillCheck)
-                
+
                 if success then
-                    TriggerServerEvent('as_fishing:server:catach', zoneType, currentRod)
+                    -- Send rod key instead of rod data for server-side validation
+                    TriggerServerEvent('as_fishing:server:catach', zoneType, currentRodName)
                 else
                     lib.notify({description = Config.Lang['fish_got_away'], type = 'error'})
                 end
 
-                if isFishing then
-                    StopFishing()
-                    Wait(1000)
-                    TriggerEvent('as_fishing:start')
-                end
+                StopFishing()
                 break
             end
         end
+        fishingThread = false
     end)
 end
 
@@ -192,10 +207,11 @@ CreateThread(function()
 
         lib.requestModel(v.PedModel)
         local ped = CreatePed(4, v.PedModel, v.PedCoords.x, v.PedCoords.y, v.PedCoords.z - 1.0, v.PedCoords.w, false, true)
+        SetModelAsNoLongerNeeded(v.PedModel)
         FreezeEntityPosition(ped, true)
         SetEntityInvincible(ped, true)
         SetBlockingOfNonTemporaryEvents(ped, true)
-        
+
         exports.ox_target:addLocalEntity(ped, {
             {
                 label = v.TargetLabel,
@@ -208,10 +224,11 @@ CreateThread(function()
     for k, v in pairs(Config.FishingSell) do
         lib.requestModel(v.PedModel)
         local ped = CreatePed(4, v.PedModel, v.PedCoords.x, v.PedCoords.y, v.PedCoords.z - 1.0, v.PedCoords.w, false, true)
+        SetModelAsNoLongerNeeded(v.PedModel)
         FreezeEntityPosition(ped, true)
         SetEntityInvincible(ped, true)
         SetBlockingOfNonTemporaryEvents(ped, true)
-        
+
         exports.ox_target:addLocalEntity(ped, {
             {
                 label = v.TargetLabel,
@@ -257,5 +274,13 @@ AddEventHandler('as_fishing:bigFish', function()
     Wait(200)
     lib.notify({description = Config.Lang['bigfish'], type = 'error'})
     SetPedToRagdoll(ped, 5000, 5000, 0, true, true, false)
-    ApplyForceToEntity(ped, 1, GetEntityForwardVector(ped) * 90.0, 0.0, 40.0, 0.0, 0, false, true, true, false, true)
+    local fwd = GetEntityForwardVector(ped)
+    ApplyForceToEntity(ped, 1, fwd.x * 15.0, fwd.y * 15.0, 5.0, 0.0, 0.0, 0.0, 0, false, true, true, false, true)
+end)
+
+-- Cleanup on resource stop
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        if isFishing then StopFishing() end
+    end
 end)

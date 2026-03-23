@@ -1,18 +1,18 @@
 Config = {}
 
-Config.Debug = false 
+Config.Debug = false
 Config.CatchWebhook = ''
 Config.BuySellWebhook = ''
 
 
-Config.FishingZoneTime = {min = 13000, max = 32000} 
-Config.NormalTime = {min = 13000, max = 22000}
-Config.DeepWaterTime = {min = 5000, max = 12000}
+Config.FishingZoneTime = { min = 13000, max = 32000 }
+Config.NormalTime = { min = 13000, max = 22000 }
+Config.DeepWaterTime = { min = 5000, max = 12000 }
 
-Config.Depth = 100.0 
-Config.BigFish = 100 
+Config.Depth = 100.0
+Config.BigFish = 100
 
-Config.SkillCheck = {'easy', 'easy'}, {'e'}
+Config.SkillCheck = { 'easy', 'easy' }
 
 Config.FishingShops = {
     ['SHOP_PALETO'] = {
@@ -40,7 +40,7 @@ Config.FishingZones = {
     ['FISHINGZONE_1_PALETOBAY'] = {
         coords = vec3(-1593.0, 5227.0, 4.0),
         size = vec3(10.0, 73.0, 10.0),
-        rotation = 25.0, 
+        rotation = 25.0,
         Blip = {
             Enabled = true,
             Sprite = 68,
@@ -79,114 +79,114 @@ Config.Rods = {
 }
 
 Config.Fish = {
-  ['fish_tuna'] = { 
-      ItemRarity = 'rare', 
-      ItemPrice = 1000, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Tuna', 
-      ItemDisc = 'A good fish' 
-  },
-  ['fish_salmon'] = { 
-      ItemRarity = 'rare', 
-      ItemPrice = 1500, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Salmon', 
-      ItemDisc = 'A good fish' 
-  },
-  ['fish_trout'] = { 
-      ItemRarity = 'rare', 
-      ItemPrice = 1200, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Trout', 
-      ItemDisc = 'Fresh from the stream' 
-  },
-  ['fish_cod'] = { 
-      ItemRarity = 'medium', 
-      ItemPrice = 500, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Cod', 
-      ItemDisc = 'A good fish' 
-  },
-  ['fish_commonsole'] = { 
-      ItemRarity = 'medium', 
-      ItemPrice = 600, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Commonsole', 
-      ItemDisc = 'A flat and good fish' 
-  },
-  ['fish_plaice'] = { 
-      ItemRarity = 'medium', 
-      ItemPrice = 500, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Plaice', 
-      ItemDisc = 'Perfect for the pan' 
-  },
-  ['fish_herring'] = { 
-      ItemRarity = 'normal', 
-      ItemPrice = 300, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Herring', 
-      ItemDisc = 'Smelly smelly' 
-  },
-  ['fish_mackerel'] = { 
-      ItemRarity = 'normal', 
-      ItemPrice = 300, 
-      ItemQuantity = {1, 3}, 
-      ItemLabel = 'Mackerel', 
-      ItemDisc = 'A fast litle boy' 
-  },
-  ['trash'] = { 
-      ItemRarity = 'normal', 
-      ItemPrice = 0, 
-      ItemQuantity = {1, 2}, 
-      ItemLabel = 'Trash', 
-      ItemDisc = 'Old trash from bikini buttom' 
-  },
-  ['WEAPON_SWITCHBLADE'] = { 
-      ItemRarity = 'normal', 
-      ItemPrice = 0, 
-      ItemQuantity = {1, 1}, 
-      ItemLabel = 'Switchblade', 
-      ItemDisc = 'Dropped by a murderer' 
-  },
-  ['WEAPON_KNUCKLE'] = { 
-      ItemRarity = 'medium', 
-      ItemPrice = 0, 
-      ItemQuantity = {1, 1}, 
-      ItemLabel = 'Knucles', 
-      ItemDisc = 'Heavy metal' 
-  },
-  ['WEAPON_MACHETE'] = { 
-      ItemRarity = 'rare', 
-      ItemPrice = 0, 
-      ItemQuantity = {1, 1}, 
-      ItemLabel = 'Machete', 
-      ItemDisc = 'A rusty weapon' 
-  },
-  ['money'] = { 
-      itemName = 'money',
-      ItemRarity = 'normal', 
-      ItemPrice = 0, 
-      ItemQuantity = {100, 500}, 
-      ItemLabel = 'Cash money' 
-  },
-  ['money'] = { 
-      itemName = 'money',
-      ItemRarity = 'medium', 
-      ItemPrice = 0, 
-      ItemQuantity = {1000, 4000}, 
-      ItemLabel = 'Wet bag of money' 
-  },
-  ['money'] = { 
-      itemName = 'money',
-      ItemRarity = 'rare', 
-      ItemPrice = 0, 
-      ItemQuantity = {7000, 8000}, 
-      ItemLabel = 'Old money register' 
-  },
+    ['fish_tuna'] = {
+        ItemRarity = 'rare',
+        ItemPrice = 1000,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Tuna',
+        ItemDisc = 'A good fish'
+    },
+    ['fish_salmon'] = {
+        ItemRarity = 'rare',
+        ItemPrice = 1500,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Salmon',
+        ItemDisc = 'A good fish'
+    },
+    ['fish_trout'] = {
+        ItemRarity = 'rare',
+        ItemPrice = 1200,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Trout',
+        ItemDisc = 'Fresh from the stream'
+    },
+    ['fish_cod'] = {
+        ItemRarity = 'medium',
+        ItemPrice = 500,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Cod',
+        ItemDisc = 'A good fish'
+    },
+    ['fish_commonsole'] = {
+        ItemRarity = 'medium',
+        ItemPrice = 600,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Commonsole',
+        ItemDisc = 'A flat and good fish'
+    },
+    ['fish_plaice'] = {
+        ItemRarity = 'medium',
+        ItemPrice = 500,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Plaice',
+        ItemDisc = 'Perfect for the pan'
+    },
+    ['fish_herring'] = {
+        ItemRarity = 'normal',
+        ItemPrice = 300,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Herring',
+        ItemDisc = 'Smelly smelly'
+    },
+    ['fish_mackerel'] = {
+        ItemRarity = 'normal',
+        ItemPrice = 300,
+        ItemQuantity = { 1, 3 },
+        ItemLabel = 'Mackerel',
+        ItemDisc = 'A fast litle boy'
+    },
+    ['trash'] = {
+        ItemRarity = 'normal',
+        ItemPrice = 0,
+        ItemQuantity = { 1, 2 },
+        ItemLabel = 'Trash',
+        ItemDisc = 'Old trash from bikini buttom'
+    },
+    ['WEAPON_SWITCHBLADE'] = {
+        ItemRarity = 'normal',
+        ItemPrice = 0,
+        ItemQuantity = { 1, 1 },
+        ItemLabel = 'Switchblade',
+        ItemDisc = 'Dropped by a murderer'
+    },
+    ['WEAPON_KNUCKLE'] = {
+        ItemRarity = 'medium',
+        ItemPrice = 0,
+        ItemQuantity = { 1, 1 },
+        ItemLabel = 'Knucles',
+        ItemDisc = 'Heavy metal'
+    },
+    ['WEAPON_MACHETE'] = {
+        ItemRarity = 'rare',
+        ItemPrice = 0,
+        ItemQuantity = { 1, 1 },
+        ItemLabel = 'Machete',
+        ItemDisc = 'A rusty weapon'
+    },
+    ['money_normal'] = {
+        itemName = 'money',
+        ItemRarity = 'normal',
+        ItemPrice = 0,
+        ItemQuantity = { 100, 500 },
+        ItemLabel = 'Cash money'
+    },
+    ['money_medium'] = {
+        itemName = 'money',
+        ItemRarity = 'medium',
+        ItemPrice = 0,
+        ItemQuantity = { 1000, 4000 },
+        ItemLabel = 'Wet bag of money'
+    },
+    ['money_rare'] = {
+        itemName = 'money',
+        ItemRarity = 'rare',
+        ItemPrice = 0,
+        ItemQuantity = { 7000, 8000 },
+        ItemLabel = 'Old money register'
+    },
 }
 
-Config.Lang = { 
+Config.Lang = {
     ['no_vehicle_fishing'] = "You can't fish while sitting in a vehicle!",
     ['no_svim_fishing'] = "You can't fish while swimming!",
     ['no_zone_found'] = "You need to be in water or a fishing zone to fish!",
@@ -204,10 +204,10 @@ Config.Lang = {
     ['not_enough_money'] = "You don't have enough money!",
     ['inventory_full'] = "Your inventory is full!",
     ['no_items_to_sell'] = "You have none of these on you!",
-    ['bought_a'] = "You bought a ", 
+    ['bought_a'] = "You bought a ",
     ['for_total'] = " for a total of ",
-    ['count_stk'] = " pcs.", 
-    ['you_caught'] = "You caught ", 
+    ['count_stk'] = " pcs.",
+    ['you_caught'] = "You caught ",
     ['log_buy_title'] = "Store Purchase",
     ['log_buy_desc'] = " bought a ",
     ['log_catch_title'] = "Catch",
