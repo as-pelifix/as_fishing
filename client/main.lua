@@ -9,18 +9,24 @@ local function debugPrint(msg)
     if Config.Debug then print("^2[Fishing Debug] ^7" .. msg) end
 end
 
--- Create zones once at resource start instead of every GetCurrentZone() call
-local fishingZones = {}
+-- Track zone state via onEnter/onExit instead of polling contains()
+local insideFishingZone = false
 
-CreateThread(function()
-    for name, data in pairs(Config.FishingZones) do
-        fishingZones[name] = lib.zones.box({
-            coords = data.coords,
-            size = data.size,
-            rotation = data.rotation
-        })
-    end
-end)
+for name, data in pairs(Config.FishingZones) do
+    lib.zones.box({
+        coords = data.coords,
+        size = data.size,
+        rotation = data.rotation,
+        onEnter = function()
+            insideFishingZone = true
+            debugPrint("Entered fishing zone: " .. name)
+        end,
+        onExit = function()
+            insideFishingZone = false
+            debugPrint("Left fishing zone: " .. name)
+        end
+    })
+end
 
 function GetCurrentZone()
     local ped = PlayerPedId()
@@ -34,9 +40,7 @@ function GetCurrentZone()
         return nil, Config.Lang['no_svim_fishing']
     end
 
-    for name, zone in pairs(fishingZones) do
-        if zone:contains(coords) then return 'zone' end
-    end
+    if insideFishingZone then return 'zone' end
 
     local veh = GetVehiclePedIsUsing(ped)
     if veh ~= 0 and GetVehicleClass(veh) == 14 then
