@@ -31,8 +31,8 @@ dependencies {
     Config = {}
 
 Config.Debug = false 
-Config.CatchWebhook = 'https://discord.com/api/webhooks/1485293632184385678/3SasHI1HZayMdtZX4LPlLpKFeujwtFT2jzYqCM4VeQirrcp9XonuBmcmHFxZfrC2ztRw'
-Config.BuySellWebhook = 'https://discord.com/api/webhooks/1485293632184385678/3SasHI1HZayMdtZX4LPlLpKFeujwtFT2jzYqCM4VeQirrcp9XonuBmcmHFxZfrC2ztRw'
+Config.CatchWebhook = ''
+Config.BuySellWebhook = ''
 
 
 Config.FishingZoneTime = {min = 13000, max = 32000} 
