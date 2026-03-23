@@ -97,8 +97,6 @@ AddEventHandler('as_fishing:start', function()
         return
     end
 
-    local ped = PlayerPedId()
-
     local zoneType, errorMsg = GetCurrentZone()
     if not zoneType then
         return lib.notify({description = errorMsg, type = 'error'})
@@ -126,8 +124,7 @@ function StartFishingCycle(zoneType)
     TaskPlayAnim(ped, 'amb@world_human_stand_fishing@idle_a', 'idle_b', 8.0, 8.0, -1, 1, 1, 0, 0, 0)
 
     local boneIndex = GetPedBoneIndex(ped, 60309)
-    -- Local prop only, no need for networking
-    activeRodObj = CreateObject(`prop_fishing_rod_01`, GetEntityCoords(ped), false, false, false)
+    activeRodObj = CreateObject(`prop_fishing_rod_01`, GetEntityCoords(ped), true, false, false)
     AttachEntityToEntity(activeRodObj, ped, boneIndex, 0, 0, 0, 0, 0, 0, false, false, false, false, 2, true)
 
     local baseWait = 0
@@ -157,7 +154,7 @@ function StartFishingCycle(zoneType)
                 break
             end
 
-            if IsControlJustPressed(0, 73) then
+            if IsControlPressed(0, 73) then
                 StopFishing()
                 lib.notify({description = Config.Lang['fishing_stop'], type = 'inform'})
                 break
@@ -200,14 +197,16 @@ end)
 
 CreateThread(function()
     for k, v in pairs(Config.FishingShops) do
-        local blip = AddBlipForCoord(v.PedCoords.x, v.PedCoords.y, v.PedCoords.z)
-        SetBlipSprite(blip, v.Blip.Sprite)
-        SetBlipColour(blip, v.Blip.Color)
-        SetBlipScale(blip, v.Blip.Scale)
-        SetBlipAsShortRange(blip, true)
-        BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(v.Blip.Name)
-        EndTextCommandSetBlipName(blip)
+        if v.Blip and v.Blip.ShowBlip then
+            local blip = AddBlipForCoord(v.PedCoords.x, v.PedCoords.y, v.PedCoords.z)
+            SetBlipSprite(blip, v.Blip.Sprite)
+            SetBlipColour(blip, v.Blip.Color)
+            SetBlipScale(blip, v.Blip.Scale)
+            SetBlipAsShortRange(blip, true)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentString(v.Blip.Name)
+            EndTextCommandSetBlipName(blip)
+        end
 
         lib.requestModel(v.PedModel)
         local ped = CreatePed(4, v.PedModel, v.PedCoords.x, v.PedCoords.y, v.PedCoords.z - 1.0, v.PedCoords.w, false, true)
@@ -226,6 +225,17 @@ CreateThread(function()
     end
 
     for k, v in pairs(Config.FishingSell) do
+        if v.Blip and v.Blip.ShowBlip then
+            local blip = AddBlipForCoord(v.PedCoords.x, v.PedCoords.y, v.PedCoords.z)
+            SetBlipSprite(blip, v.Blip.Sprite)
+            SetBlipColour(blip, v.Blip.Color)
+            SetBlipScale(blip, v.Blip.Scale)
+            SetBlipAsShortRange(blip, true)
+            BeginTextCommandSetBlipName("STRING")
+            AddTextComponentString(v.Blip.Name)
+            EndTextCommandSetBlipName(blip)
+        end
+
         lib.requestModel(v.PedModel)
         local ped = CreatePed(4, v.PedModel, v.PedCoords.x, v.PedCoords.y, v.PedCoords.z - 1.0, v.PedCoords.w, false, true)
         SetModelAsNoLongerNeeded(v.PedModel)

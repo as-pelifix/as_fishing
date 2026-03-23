@@ -131,6 +131,7 @@ AddEventHandler('as_fishing:sellFish', function(fishKey)
     local fishData = Config.Fish[fishKey]
 
     if not fishData then return end
+    if not fishData.ItemPrice or fishData.ItemPrice <= 0 then return end
 
     local count = exports.ox_inventory:Search(src, 'count', fishKey)
     local price = fishData.ItemPrice
