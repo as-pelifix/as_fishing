@@ -95,24 +95,16 @@ AddEventHandler('as_fishing:server:catach', function(zoneType, rodKey)
     local label = fishData.ItemLabel or selectedFish
 
     -- Handle money catches separately (money is not an inventory item)
-    if fishData.itemName == 'money' then
-        xPlayer.addMoney(amount)
-        local msg = Config.Lang['you_caught'] .. amount .. Config.Lang['currency']
-        local logMsg = GetPlayerName(src) .. Config.Lang['log_catch_desc'] .. amount .. Config.Lang['currency']
-        TriggerClientEvent('ox_lib:notify', src, { description = msg, type = 'success' })
-        sendLog(Config.CatchWebhook, Config.Lang['log_catch_title'], logMsg)
-    else
-        if not exports.ox_inventory:CanCarryItem(src, selectedFish, amount) then
-            TriggerClientEvent('ox_lib:notify', src, { description = Config.Lang['inventory_full'], type = 'error' })
-            return
-        end
-
-        exports.ox_inventory:AddItem(src, selectedFish, amount)
-        local msg = Config.Lang['you_caught'] .. amount .. Config.Lang['count_stk'] .. " " .. label
-        local logMsg = GetPlayerName(src) .. Config.Lang['log_catch_desc'] .. amount .. "x " .. label .. " (Rarity: " .. mainRarity .. ")"
-        TriggerClientEvent('ox_lib:notify', src, { description = msg, type = 'success' })
-        sendLog(Config.CatchWebhook, Config.Lang['log_catch_title'], logMsg)
+    if not exports.ox_inventory:CanCarryItem(src, selectedFish, amount) then
+        TriggerClientEvent('ox_lib:notify', src, { description = Config.Lang['inventory_full'], type = 'error' })
+        return
     end
+
+    exports.ox_inventory:AddItem(src, selectedFish, amount)
+    local msg = Config.Lang['you_caught'] .. amount .. Config.Lang['count_stk'] .. " " .. label
+    local logMsg = GetPlayerName(src) .. Config.Lang['log_catch_desc'] .. amount .. "x " .. label .. " (Rarity: " .. mainRarity .. ")"
+    TriggerClientEvent('ox_lib:notify', src, { description = msg, type = 'success' })
+    sendLog(Config.CatchWebhook, Config.Lang['log_catch_title'], logMsg)
 end)
 
 -- Rate limiting for sell events
