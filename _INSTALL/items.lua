@@ -28,12 +28,6 @@
     stack = true,
 },
 
-["fish_mackerel"] = {
-    label = "Makrel fisk",
-    weight = 1,
-    stack = true,
-},
-
 ["fish_plaice"] = {
     label = "Rødspætte fisk",
     weight = 1,
